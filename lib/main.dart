@@ -21,18 +21,75 @@ class DayOfWeekApp extends StatelessWidget {
   }
 }
 
-class DayOfWeekList extends StatelessWidget {
+class DayOfWeekList extends StatefulWidget {
   const DayOfWeekList({super.key});
+
+  @override
+  DayOfWeekListState createState() => DayOfWeekListState();
+}
+
+class DayOfWeekListState extends State<DayOfWeekList> {
+  bool _isBottomSheetVisible = false;
+  final GlobalKey _mondayKey = GlobalKey();
 
   void _showToast(String message) {
     Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey[600],
-        textColor: Colors.white,
-        fontSize: 16.0);
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.grey[600],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    final RenderBox renderBox =
+    _mondayKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final double y = offset.dy + renderBox.size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    setState(() {
+      _isBottomSheetVisible = true;
+    });
+
+    Overlay.of(context).insert(
+      OverlayEntry(
+        builder: (BuildContext context) {
+          return Positioned(
+            left: 0,
+            top: y,
+            width: screenWidth,
+            height: screenHeight - y,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isBottomSheetVisible = false;
+                });
+              },
+              child: Material(
+                child: SizedBox(
+                  child: ListView.builder(
+                    itemCount: 10,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 50,
+                        margin: const EdgeInsets.all(8.0),
+                        color: Colors.blue[100],
+                        child: Center(child: Text('Box ${index + 1}')),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -53,9 +110,12 @@ class DayOfWeekList extends StatelessWidget {
         children: days
             .map((day) => GestureDetector(
           onTap: () {
-              _showToast('${day}입니다!');
+            if (day == '월요일') {
+              _showBottomSheet(context);
+            }
           },
           child: Container(
+            key: day == '월요일' ? _mondayKey : null,
             width: 100,
             padding: const EdgeInsets.all(12.0),
             margin: const EdgeInsets.all(8.0),
