@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(const DayOfWeekApp());
@@ -23,6 +24,17 @@ class DayOfWeekApp extends StatelessWidget {
 class DayOfWeekList extends StatelessWidget {
   const DayOfWeekList({super.key});
 
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[600],
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     const List<String> days = [
@@ -39,21 +51,26 @@ class DayOfWeekList extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: days
-            .map((day) => Container(
-          width: 100,
-          padding: const EdgeInsets.all(12.0),
-          margin: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Colors.blue[100],
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Text(
-            day,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+            .map((day) => GestureDetector(
+          onTap: () {
+              _showToast('${day}입니다!');
+          },
+          child: Container(
+            width: 100,
+            padding: const EdgeInsets.all(12.0),
+            margin: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              day,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
           ),
         ))
